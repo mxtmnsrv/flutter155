@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "882938165675",
+    "project_id": "garagesynch",
+    "storage_bucket": "garagesynch.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:882938165675:android:096392d8c198549a88faee",
+        "android_client_info": {
+          "package_name": "com.example.firebase_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAz44MI_EbZxLIBX1AEiW-lhm1J3E0C33E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
