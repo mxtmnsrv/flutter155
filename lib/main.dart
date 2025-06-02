@@ -15,7 +15,6 @@ import 'package:latlong2/latlong.dart';
 
 //import 'package:GarageSync/pages/ChatPagesList.dart';
 import 'package:GarageSync/pages/Login.dart';
-
 import 'firebase_options.dart';
 
 void main() async {
