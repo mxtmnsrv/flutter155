@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddIssuePage extends StatefulWidget {
-  const AddIssuePage({Key? key}) : super(key: key);
+  final String carVin; // Add this to know which car the issue belongs to
+
+  const AddIssuePage({Key? key, required this.carVin}) : super(key: key);
 
   @override
   State<AddIssuePage> createState() => _AddIssuePageState();
@@ -10,10 +14,11 @@ class AddIssuePage extends StatefulWidget {
 class _AddIssuePageState extends State<AddIssuePage> {
   String? _selectedCategory;
   final TextEditingController _descriptionController = TextEditingController();
+  bool _isLoading = false;
 
   final List<String> _categories = ['Engine', 'Interior', 'Electrical'];
 
-  void _submitIssue() {
+  Future<void> _submitIssue() async {
     final description = _descriptionController.text.trim();
 
     if (_selectedCategory == null || description.isEmpty) {
@@ -23,12 +28,45 @@ class _AddIssuePageState extends State<AddIssuePage> {
       return;
     }
 
-    // TODO: Save issue to Firebase here
+    setState(() {
+      _isLoading = true;
+    });
 
-    Navigator.pop(context); // Close the page
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Issue added successfully')),
-    );
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception("No user logged in");
+
+      // Create issue data
+      final issueData = {
+        'category': _selectedCategory,
+        'description': description,
+        'date': DateTime.now().toIso8601String(),
+        'status': 'pending',
+      };
+
+      // Save to Firestore under Users > uid > cars > carVin > issues
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .collection('cars')
+          .doc(widget.carVin)
+          .collection('issues')
+          .add(issueData);
+
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Issue added successfully')),
+      );
+    } catch (e) {
+      print("Error adding issue: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add issue: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -66,10 +104,12 @@ class _AddIssuePageState extends State<AddIssuePage> {
             ),
             const SizedBox(height: 24),
             Center(
-              child: ElevatedButton(
-                onPressed: _submitIssue,
-                child: const Text('Submit'),
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _submitIssue,
+                      child: const Text('Submit'),
+                    ),
             )
           ],
         ),

@@ -3,6 +3,7 @@ import 'package:GarageSync/services/auth/auth_service.dart';
 import 'package:GarageSync/pages/ChatPagesList.dart';
 import 'package:GarageSync/pages/add_vehicle_page.dart';
 import 'package:GarageSync/pages/select_vehicle_page.dart';
+import 'package:GarageSync/pages/select_vehicle_for_history_page.dart';
 
 class CustomerMainScreen extends StatelessWidget {
   final String username;
@@ -44,7 +45,12 @@ class CustomerMainScreen extends StatelessWidget {
             ),
             ListTile(
               title: const Text("See Repair History"),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SelectVehicleForHistoryPage()),
+                );
+              },
             ),
             ListTile(
               title: const Text("AI Chatbot"),

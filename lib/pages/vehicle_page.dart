@@ -5,12 +5,14 @@ class VehiclesPage extends StatelessWidget {
   final String name;
   final String model;
   final int kilometers;
+  final String vin;
 
   const VehiclesPage({
     Key? key,
     required this.name,
     required this.model,
     required this.kilometers,
+    required this.vin,
   }) : super(key: key);
 
   @override
@@ -72,7 +74,7 @@ class VehiclesPage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               children: [
                 const _ActionButton(icon: Icons.oil_barrel, label: 'Oil Change'),
-                _ActionButton(icon: Icons.build, label: 'Add Issue'),
+                _ActionButton(icon: Icons.build, label: 'Add Issue', vin: vin),
                 const _ActionButton(icon: Icons.car_repair, label: 'Parts'),
               ],
             ),
@@ -128,8 +130,13 @@ class _StatusColumn extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
+  final String? vin; // Add this parameter
 
-  const _ActionButton({required this.icon, required this.label});
+  const _ActionButton({
+    required this.icon, 
+    required this.label,
+    this.vin, // Make it optional
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -138,10 +145,13 @@ class _ActionButton extends StatelessWidget {
         if (label == 'Add Issue') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddIssuePage()),
+            MaterialPageRoute(
+              builder: (context) => AddIssuePage(
+                carVin: vin ?? '', // Use the passed VIN
+              ),
+            ),
           );
         }
-        // Можно добавить другие действия для других кнопок
       },
       child: Column(
         children: [

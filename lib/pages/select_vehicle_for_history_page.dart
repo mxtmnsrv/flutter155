@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'vehicle_page.dart';
+import 'repair_history_page.dart';
 
-class SelectVehiclePage extends StatelessWidget {
-  const SelectVehiclePage({Key? key}) : super(key: key);
+class SelectVehicleForHistoryPage extends StatelessWidget {
+  const SelectVehicleForHistoryPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +46,9 @@ class SelectVehiclePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => VehiclesPage(
-                        name: name,
-                        model: model,
-                        kilometers: kilometers,
-                        vin: docs[index].id,
+                      builder: (context) => RepairHistoryPage(
+                        carVin: docs[index].id, // Pass the VIN
+                        carName: '${data['name']} ${data['model']}', // For the title
                       ),
                     ),
                   );
