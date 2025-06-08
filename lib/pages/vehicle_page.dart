@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'add_issue_page.dart';
 
 class VehiclesPage extends StatelessWidget {
   final String name;
@@ -69,10 +70,10 @@ class VehiclesPage extends StatelessWidget {
               crossAxisCount: 4,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                _ActionButton(icon: Icons.oil_barrel, label: 'Oil Change'),
-                _ActionButton(icon: Icons.build, label: 'Add Repair'),
-                _ActionButton(icon: Icons.car_repair, label: 'Parts'),
+              children: [
+                const _ActionButton(icon: Icons.oil_barrel, label: 'Oil Change'),
+                _ActionButton(icon: Icons.build, label: 'Add Issue'),
+                const _ActionButton(icon: Icons.car_repair, label: 'Parts'),
               ],
             ),
             const SizedBox(height: 24),
@@ -132,22 +133,34 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.blue[50],
-          child: Icon(icon, color: Colors.blue),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12),
-          textAlign: TextAlign.center,
-        ),
-      ],
+    return GestureDetector(
+      onTap: () {
+        if (label == 'Add Issue') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddIssuePage()),
+          );
+        }
+        // Можно добавить другие действия для других кнопок
+      },
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.blue[50],
+            child: Icon(icon, color: Colors.blue),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }
+
 
 class _AlertCard extends StatelessWidget {
   final String title;
