@@ -26,23 +26,45 @@ class RepairHistoryPage extends StatelessWidget {
             .collection('cars')
             .doc(carVin)
             .collection('issues')
-            //.where('status', isEqualTo: 'pending') // Only resolved issues
-            .orderBy('date', descending: true) // Newest first
+            .where('status', isEqualTo: 'resolved')
+            .orderBy('date', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-          if (snapshot.data!.docs.isEmpty) return const Center(child: Text('No resolved issues yet.'));
+          // Handle connection state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
+          // Handle errors
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          // Handle empty data
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No resolved issues found.'));
+          }
+
+          // Display the list
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              final issue = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              final doc = snapshot.data!.docs[index];
+              final issue = doc.data() as Map<String, dynamic>;
+              
+              // Safely parse the date
+              String formattedDate = 'Date not available';
+              try {
+                final date = DateTime.parse(issue['date']).toLocal();
+                formattedDate = 'Resolved on ${date.toString().split(' ')[0]}';
+              } catch (e) {
+                debugPrint('Error parsing date: $e');
+              }
+
               return ListTile(
-                title: Text(issue['category']),
-                subtitle: Text(issue['description']),
-                trailing: Text(
-                  'Resolved on ${DateTime.parse(issue['date']).toLocal().toString().split(' ')[0]}',
-                ),
+                title: Text(issue['category'] ?? 'No category'),
+                subtitle: Text(issue['description'] ?? 'No description'),
+                trailing: Text(formattedDate),
               );
             },
           );
